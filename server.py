@@ -1,7 +1,5 @@
-
-from my_app.controllers import #TODO controllers go here
-
-from my_app import app
+from crypto_brain import app
+from crypto_brain.controllers import users, market_data
 
 if __name__=="__main__":
 
