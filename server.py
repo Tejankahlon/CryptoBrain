@@ -1,5 +1,6 @@
 from crypto_brain import app
-from crypto_brain.controllers import users, market_data
+from crypto_brain.controllers import market_data_controller
+from crypto_brain.controllers import users_controller
 
 if __name__=="__main__":
 

@@ -1,6 +1,6 @@
 from crypto_brain import app, bcrypt
 from flask import flash
-from crypto_brain import render_template, redirect, request, session
+from flask import render_template, redirect, request, session
 from crypto_brain.config.mongoconnection import get_db
 import re 
 

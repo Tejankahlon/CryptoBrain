@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Login</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    </head>
+    <body>
+        <div class="login-wrapper">
+            <div class="login-side">
+                <div class="my-form__wrapper">
+                    <div class="login-welcome-row">
+                        <h1>Welcome &#x1F44F;</h1>
+                        <p>Please enter your details!</p>
+                    </div>
+                    <form class="my-form">
+                        <div class="text-field">
+                            <label for="email">Email:</label>
+                            <input type="email" id="email" name="email" placeholder="Your Email" required>
+                        </div>
+                        <div class="text-field">
+                            <label for="password">Password:</label>
+                            <input id="password" type="password" name="password" placeholder="Your Password" required>
+                        </div>
+                        <input type="submit" class="my-form__button" value="Register">
+                        <div class="my-form__actions">
+                            <div class="my-form__row">
+                                <span>Did you forget your password?</span>
+                                <div>-</div>
+                                <a href="#" title="Reset Password">Reset Password</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="info-side">
+                <div class="welcome-message">
+                    <h2>Welcome to CryptoBrain! 👋</h2>
+                    <p>Your guide to cryptocurrency investment and market insights.</p>    
+                </div>
+            </div>
+        </div>
+        <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    </body>
+</html>
