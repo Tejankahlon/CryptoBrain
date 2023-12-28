@@ -14,13 +14,22 @@ def register():
 def process_login():
     user = User.validate_login(request.form)
     if not user:
-        return redirect(url_for('index', error="Invalid login credentials"))
-    session['user_id'] = user.id
-    return redirect(url_for('react_app'))
+        return {'error': 'Invalid login credentials'}, 401
+    else:
+        session['user_id'] = user.id
+        return {'message': 'Login successful'}, 200
+
+
+@app.route('/process-register', methods=['POST'])
+def process_register():
+    create_user = User.validate_reg(request.form)
+    if create_user is True:
+        return {'message': 'User created successfully!'}, 201
+    else:
+        return {'error': 'Registration failed, please try again.'}, 400
+
 
 @app.route('/app')
 def react_app():
     # Serves React App
     return render_template('react_app.html')
-
-# setup client for react
