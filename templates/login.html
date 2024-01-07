@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
         <title>Login</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+        <link rel="stylesheet" href="/flask-static/css/style.css">
     </head>
     <body>
         <div class="login-wrapper">
@@ -14,7 +14,7 @@
                         <h1>Welcome &#x1F44F;</h1>
                         <p>Please enter your details!</p>
                     </div>
-                    <form class="my-form">
+                    <form class="my-form" method="POST" action="/process-login">
                         <div class="text-field">
                             <label for="email">Email:</label>
                             <input type="email" id="email" name="email" placeholder="Your Email" required>
@@ -23,12 +23,15 @@
                             <label for="password">Password:</label>
                             <input id="password" type="password" name="password" placeholder="Your Password" required>
                         </div>
-                        <input type="submit" class="my-form__button" value="Register">
+                        <input type="submit" class="my-form__button" value="Login">
                         <div class="my-form__actions">
                             <div class="my-form__row">
                                 <span>Did you forget your password?</span>
                                 <div>-</div>
                                 <a href="#" title="Reset Password">Reset Password</a>
+                            </div>
+                            <div class="my-form__signup">
+                                <a href="/register" title="Create Account">Create Account</a>
                             </div>
                         </div>
                     </form>
@@ -41,6 +44,6 @@
                 </div>
             </div>
         </div>
-        <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+        <script src="/flask-static/js/script.js"></script>
     </body>
 </html>

@@ -1,6 +1,7 @@
-from crypto_brain import app, bcrypt
 from flask import flash
-from flask import render_template, redirect, request, session
+from flask import render_template, redirect, request, session, current_app
+from flask_bcrypt import Bcrypt
+from bson import ObjectId
 from crypto_brain.config.mongoconnection import get_db
 import re 
 
@@ -23,7 +24,7 @@ class User:
             'first_name': form_data['first_name'],
             'last_name': form_data['last_name'],
             'email': form_data['email'],
-            'password': bcrypt.generate_password_hash(form_data['password']).decode('utf-8'),
+            'password': current_app.bcrypt.generate_password_hash(form_data['password']).decode('utf-8'),
         }
         db = get_db()  # Function to get MongoDB database instance
         db.users.insert_one(hashed_data) 
@@ -69,18 +70,12 @@ class User:
         return is_valid
     
     @staticmethod
-    def validate_login(form_data):
+    def validate_login(form_data, bcrypt):
         if not EMAIL_REGEX.match(form_data['email']):
             flash("Invalid email/password.", "login")
             return False
-
-        user = User.get_by_email(form_data)
-        if not user:
-            flash("Invalid email/password.", "login")
-            return False
-        
-        if not bcrypt.check_password_hash(user.password, form_data['password']):
-            flash("Invalid email/password.", "login")
-            return False
-        
-        return user
+        user = User.get_by_email(form_data['email'])
+        if user and bcrypt.check_password_hash(user.password, form_data['password']):
+            return user
+        else:
+            return None
