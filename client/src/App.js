@@ -1,16 +1,15 @@
-import React from 'react'
-import Home from './components/Home'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import React from 'react';
+import Home from './components/Home';
+import { Routes, Route } from 'react-router-dom';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/home" element={<Home />} />
-        {/* Define other routes here */}
-      </Routes>
-    </Router>
-  )
+    <Routes>
+      <Route path="/home" element={<ProtectedRoute component={Home} />} />
+      {/* Add other routes here */}
+    </Routes>
+  );
 }
 
-export default App
+export default App;

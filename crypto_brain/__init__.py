@@ -5,4 +5,4 @@
 
 # bcrypt = Bcrypt(app)
 
-# app.secret_key = "qm&4Bkd8*l38^Fgam%1nVTqO"
+# app.secret_key = ""

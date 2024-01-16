@@ -5,6 +5,7 @@
         <title>Login</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="/flask-static/css/style.css">
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     </head>
     <body>
         <div class="login-wrapper">
@@ -14,7 +15,7 @@
                         <h1>Welcome &#x1F44F;</h1>
                         <p>Please enter your details!</p>
                     </div>
-                    <form class="my-form" method="POST" action="/process-register">
+                    <form class="my-form" id="registerForm" method="POST" action="/process-register">
                         <div class="text-field">
                             <label for="first_name">First Name:</label>
                             <input type="text" id="first_name" name="first_name" placeholder="Your First Name" required>
