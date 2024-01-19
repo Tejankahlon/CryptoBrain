@@ -15,6 +15,15 @@
                         <h1>Welcome &#x1F44F;</h1>
                         <p>Please enter your details!</p>
                     </div>
+                    {% with messages = get_flashed_messages() %}
+                        {% if messages %}
+                            <div id="login-flash-messages" class="flash-message" style="display: none;">
+                                {% for message in messages %}
+                                    <p>{{ message }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endwith %}
                     <form class="my-form" id="loginForm" method="POST" action="/process-login">
                         <div class="text-field">
                             <label for="email">Email:</label>

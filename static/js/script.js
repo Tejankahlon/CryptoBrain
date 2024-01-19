@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
 function submitForm(formType) {
     var form = formType === 'login' ? loginForm : registerForm;
     var url = formType === 'login' ? '/process-login' : '/process-register';
+    var flashMessagesContainerId = formType === 'login' ? 'login-flash-messages' : 'register-flash-messages';
     var formData = new FormData(form);
 
     axios({
@@ -37,6 +38,15 @@ function submitForm(formType) {
         }
     })
     .catch(function(error) {
-        console.error('Error:', error);
+        if (error.response) {
+            // Extracting the error message sent from the Flask server
+            const errorMessage = error.response.data.error;
+            // Displaying this message on the page
+            const flashMessagesContainer = document.getElementById(flashMessagesContainerId);
+            flashMessagesContainer.innerHTML = `<p class="flash-message">${errorMessage}</p>`;
+            flashMessagesContainer.style.display = 'block'; 
+        } else {
+            console.error('Error:', error);
+        }
     });
 }

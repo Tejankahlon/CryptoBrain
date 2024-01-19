@@ -15,6 +15,15 @@
                         <h1>Welcome &#x1F44F;</h1>
                         <p>Please enter your details!</p>
                     </div>
+                    {% with messages = get_flashed_messages() %}
+                        {% if messages %}
+                            <div id="register-flash-messages" class="flash-message" style="display: none;">
+                                {% for message in messages %}
+                                    <p>{{ message }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endwith %}
                     <form class="my-form" id="registerForm" method="POST" action="/process-register">
                         <div class="text-field">
                             <label for="first_name">First Name:</label>
@@ -39,9 +48,8 @@
                         <input type="submit" class="my-form__button" value="Register">
                         <div class="my-form__actions">
                             <div class="my-form__row">
-                                <span>Did you forget your password?</span>
-                                <div>-</div>
-                                <a href="#" title="Reset Password">Reset Password</a>
+                                <span>Already have an account?</span>
+                                <a href="/login" title="Login">Login</a>
                             </div>
                         </div>
                     </form>

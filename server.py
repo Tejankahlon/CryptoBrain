@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, send_from_directory, request, session, url_for, jsonify
+from flask import Flask, render_template, flash, send_from_directory, request, session, url_for, jsonify
 import os
 from crypto_brain.models.users_model import User
 from flask_bcrypt import Bcrypt
@@ -40,13 +40,16 @@ def process_login():
         return jsonify({'success': True}), 200
         # return redirect("http://localhost:3000/home")
     else:
+        flash('Invalid login credentials')
         return jsonify({'success': False, 'error': 'Invalid login credentials'}), 401
+
 
 @app.route('/process-register', methods=['POST'])
 def process_register():
     form_data = request.form
     if not User.validate_reg(form_data):
-        return jsonify({'error': 'Registration validation failed'}), 400
+        flash('Registration failed. Please try again.')
+        return jsonify({'error': 'Registration error: Please make sure all fields are filled out correctly.'}), 400
     hashed_password = Bcrypt().generate_password_hash(form_data['password']).decode('utf-8')
     user_data = {
         'first_name': form_data['first_name'],
