@@ -4,6 +4,7 @@ from crypto_brain.models.users_model import User
 from flask_bcrypt import Bcrypt
 from crypto_brain.config.mongoconnection import get_db
 from flask_cors import CORS
+import requests, time
 
 
 # Initialize Flask app
@@ -13,7 +14,7 @@ bcrypt = Bcrypt(app)
 CORS(app, supports_credentials=True)
 app.config['SESSION_COOKIE_DOMAIN'] = 'localhost'
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
-
+cache = {}
 
 # Flask routes
 @app.route('/login')
@@ -70,6 +71,38 @@ def process_register():
 def logout_user():
     session.pop('user_id', None)
     return jsonify({'success': True, 'message':'Logged out successfully'}), 200
+
+@app.route('/api/markets', methods=['GET'])
+def get_market_data():
+    current_time = time.time()
+    # Checks if we have cached data and it's still valid (within 1 minute)
+    cached_data = cache.get('market_data')
+    if cached_data and current_time - cached_data['timestamp'] < 60:
+        return jsonify(cached_data['data']) # Return cached data
+    # If no valid cache, makes a request to CoinGecko API
+    response = requests.get("https://api.coingecko.com/api/v3/coins/markets", params={
+        'vs_currency': 'usd',
+        'order': 'market_cap_desc',
+        'per_page': 50,
+        'page': 1
+    })
+    # Update cache with new data and current timestamp
+    cache['market_data'] = {
+        'timestamp': current_time,
+        'data': response.json()
+    }
+    # Return the fresh new data from API call
+    return jsonify(response.json())
+
+@app.route('/api/coins')
+def get_coins():
+    response = requests.get('https://api.coingecko.com/api/v3/coins/list')
+    return jsonify(response.json())
+
+@app.route('/api/price/<coin_id>', methods=['GET'])
+def get_coin_price(coin_id):
+    response = requests.get(f'https://api.coingecko.com/api/v3/simple/price?ids={coin_id}&vs_currencies=usd')
+    return jsonify(response.json())
 
 @app.route('/test-session')
 def test_session():

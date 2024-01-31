@@ -2,7 +2,7 @@ body {
   background-color: #282c34;
 }
 
-.App-first-layer {
+.App {
   background-color: #282c34;
   min-height: 100vh;
   /* display: flex;

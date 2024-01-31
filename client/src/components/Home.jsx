@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import '../App.css';
+import NavBar from './NavBar';
+import MarketDashboard from './MarketDashboard';
+import SimulatedTrading from './SimulatedTrading';
+import EducationCards from './EducationCards';
 import axios from 'axios';
 
-const Nav = () => {
+const Home = () => {
     const [btcData, setBTCData] = useState({})
     useEffect(() => {
         axios.get('http://localhost:5000/check-login', { withCredentials: true })
@@ -25,7 +29,7 @@ const Nav = () => {
         .catch(error =>{
             console.error('Error fetching data: ', error)
         })
-    })
+    }, [])
 
     const handleLogout = async () => {
         try {
@@ -37,14 +41,22 @@ const Nav = () => {
     }
 
     return (
-        <div className="App-first-layer">
-            <h1>Welcome to the Home Page!</h1>
+            <div className="App">
+            <NavBar />
+            <section id='market-dashboard'>
+            <MarketDashboard />
+            </section>
+            <section id='simulated-trading'>
+            <SimulatedTrading />
+            </section>
+            <section id='education-cards'>
+            <EducationCards />
+            </section>
             <h2>BTC price: ${ btcData.usd }</h2>
             <button onClick={handleLogout}>Logout</button>
         </div>
     )
 }
 
-export default Nav
+export default Home
 
-// working on setting up main nav bar hat will rest at the top always and everything else will be underneath it in there separate components

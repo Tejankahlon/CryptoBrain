@@ -1,0 +1,11 @@
+.market-dashboard {
+    border: 1px solid #ccc; /* Gives a 'window' like effect */
+    height: 300px; /* Adjust height as needed */
+    overflow-y: auto; /* Makes the list scrollable */
+    padding: 10px;
+}
+
+.crypto-row {
+    margin-bottom: 10px;
+    /* Add more styling as needed */
+}
