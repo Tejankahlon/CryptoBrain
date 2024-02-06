@@ -4,16 +4,21 @@ from crypto_brain.models.users_model import User
 from flask_bcrypt import Bcrypt
 from crypto_brain.config.mongoconnection import get_db
 from flask_cors import CORS
+from flask_jwt_extended import JWTManager
 import requests, time
+from dotenv import load_dotenv
 
 
 # Initialize Flask app
 app = Flask(__name__, static_folder='./client/build', static_url_path='')
-app.secret_key = 'qm&4Bkd8*l38^Fgam%1nVTqO'
+load_dotenv()
+app.secret_key = os.environ.get('FLASK_APP_SECRET_KEY')
 bcrypt = Bcrypt(app)
 CORS(app, supports_credentials=True)
 app.config['SESSION_COOKIE_DOMAIN'] = 'localhost'
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+app.config['JWT_SECRET_KEY'] = 'your_jwt_secret_key'
+jwt = JWTManager(app)
 cache = {}
 
 # Flask routes
