@@ -49,37 +49,109 @@ const SimulatedTrading = () => {
         setSearchTerm(event.target.value.toLowerCase());
     };
 
-    const handleMarketOrder = (type) => {
-        const amount = parseFloat(dollarAmount);
+    const validateTransaction = (amount, type) => {
         if (isNaN(amount) || amount <= 0) {
             alert('Please enter a valid dollar amount.');
-            return;
+            return false;
         }
-
-        const quantity = amount / marketPrice;
-
-        if (type === 'buy' && amount <= currentBalance) {
-            setCurrentBalance(prev => prev - amount);
-            setHoldings(prev => ({ ...prev, [selectedCoin.id]: (prev[selectedCoin.id] || 0) + quantity }));
-        } else if (type === 'sell') {
-            if (quantity <= (holdings[selectedCoin.id] || 0)) {
-                setCurrentBalance(prev => prev + amount);
-                setHoldings(prev => {
-                    const updatedHoldings = { ...prev, [selectedCoin.id]: prev[selectedCoin.id] - quantity };
-                    if (updatedHoldings[selectedCoin.id] <= 0) {
-                        delete updatedHoldings[selectedCoin.id]; // Removes the coin from holdings if quantity is 0
-                    }
-                    return updatedHoldings;
-                });
-            } else {
-                alert('Insufficient holdings for this transaction.');
-            }
-        } else {
+    
+        if (type === 'buy' && amount > currentBalance) {
             alert('Insufficient balance for this transaction.');
+            return false;
         }
+    
+        if (type === 'sell' && amount / marketPrice > (holdings[selectedCoin.id] || 0)) {
+            alert('Insufficient holdings for this transaction.');
+            return false;
+        }
+    
+        return true;
+    };
+    
+    const processTransaction = (amount, type) => {
+        const quantity = amount / marketPrice;
+    
+        if (type === 'buy') {
+            setCurrentBalance(prev => prev - amount);
+            setHoldings(prev => ({
+                ...prev,
+                [selectedCoin.id]: (prev[selectedCoin.id] || 0) + quantity
+            }));
+        } else if (type === 'sell') {
+            setCurrentBalance(prev => prev + amount);
+            setHoldings(prev => {
+                const updatedHoldings = { ...prev, [selectedCoin.id]: prev[selectedCoin.id] - quantity };
+                if (updatedHoldings[selectedCoin.id] <= 0) {
+                    delete updatedHoldings[selectedCoin.id];
+                }
+                return updatedHoldings;
+            });
+        }
+    
         setDollarAmount('');
     };
-
+    
+    const handleBuyClick = async () => {
+        const amount = parseFloat(dollarAmount);
+        if (!validateTransaction(amount, 'buy')) return;
+    
+        const transactionData = {
+            coin_id: selectedCoin.id,
+            amount: amount,
+            price: marketPrice,
+            transaction_type: 'buy'  // Indicating a buy transaction
+        };
+    
+        try {
+            const response = await axios.post('http://localhost:5000/process-market-order', transactionData, {
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                withCredentials: true
+            });
+            if (response.data.success) {
+                alert('Buy transaction successful!');
+                processTransaction(amount, 'buy');
+            } else {
+                alert('Transaction failed: ' + response.data.message);
+            }
+        } catch (error) {
+            console.error('Error processing buy transaction:', error);
+            alert('Error processing transaction.');
+        }
+    };
+    
+    const handleSellClick = async () => {
+        const amount = parseFloat(dollarAmount);
+        if (!validateTransaction(amount, 'sell')) return;
+    
+        const transactionData = {
+            coin_id: selectedCoin.id,
+            amount: amount,
+            price: marketPrice,
+            transaction_type: 'sell'  // Indicating a sell transaction
+        };
+    
+        try {
+            const response = await axios.post('http://localhost:5000/process-market-order', transactionData, {
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                withCredentials: true
+            });
+            if (response.data.success) {
+                alert('Sell transaction successful!');
+                processTransaction(amount, 'sell');
+            } else {
+                alert('Transaction failed: ' + response.data.message);
+            }
+        } catch (error) {
+            console.error('Error processing sell transaction:', error);
+            alert('Error processing transaction.');
+        }
+    };
+    
+    
     const displayCoins = Array.isArray(coins) && searchTerm
         ? coins.filter(coin => coin.name.toLowerCase().includes(searchTerm))
         : [];
@@ -119,8 +191,8 @@ const SimulatedTrading = () => {
                 onChange={(e) => setDollarAmount(e.target.value)}
                 placeholder="Dollar Amount"
             />
-            <button onClick={() => handleMarketOrder('buy')}>Buy</button>
-            <button onClick={() => handleMarketOrder('sell')}>Sell</button>
+            <button onClick={() => handleBuyClick('buy')}>Buy</button>
+            <button onClick={() => handleSellClick('sell')}>Sell</button>
             {selectedCoin && (
                 <>
                     <h2>{selectedCoin.name} ({selectedCoin.symbol.toUpperCase()})</h2>

@@ -1,10 +1,10 @@
 from flask import Flask, render_template, flash, send_from_directory, request, session, url_for, jsonify
 import os
 from crypto_brain.models.users_model import User
+from crypto_brain.models.users_transactions_model import Transaction
 from flask_bcrypt import Bcrypt
 from crypto_brain.config.mongoconnection import get_db
 from flask_cors import CORS
-from flask_jwt_extended import JWTManager
 import requests, time
 from dotenv import load_dotenv
 
@@ -17,8 +17,6 @@ bcrypt = Bcrypt(app)
 CORS(app, supports_credentials=True)
 app.config['SESSION_COOKIE_DOMAIN'] = 'localhost'
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
-app.config['JWT_SECRET_KEY'] = 'your_jwt_secret_key'
-jwt = JWTManager(app)
 cache = {}
 
 # Flask routes
@@ -108,6 +106,27 @@ def get_coins():
 def get_coin_price(coin_id):
     response = requests.get(f'https://api.coingecko.com/api/v3/simple/price?ids={coin_id}&vs_currencies=usd')
     return jsonify(response.json())
+
+@app.route('/process-market-order', methods=['POST'])
+def process_market_order():
+    data = request.get_json()
+    user_id = session['user_id']
+    coin_id = data['coin_id']
+    amount = data['amount']
+    price = data['price']
+    transaction_type = data['transaction_type']
+
+    # Creates a new Transaction object and saves it
+    transaction_data = {
+        'user_id': user_id,
+        'coin_id': coin_id,
+        'transaction_type': transaction_type,
+        'amount': amount,
+        'price': price
+    }
+    Transaction.save(transaction_data)
+    return jsonify({'success': True})
+
 
 @app.route('/test-session')
 def test_session():
